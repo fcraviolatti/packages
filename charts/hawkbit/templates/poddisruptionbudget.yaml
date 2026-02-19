@@ -1,4 +1,3 @@
-{{- if and .Values.podDisruptionBudget.enabled (gt .Values.replicaCount 1.0) -}}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -14,3 +13,5 @@ spec:
     matchLabels:
       app: {{ include "hawkbit.name" . }}
       release: {{ .Release.Name }}
+
+{{- end }}
