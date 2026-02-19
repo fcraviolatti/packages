@@ -1,6 +1,6 @@
 apiVersion: v2
 name: hawkbit
-version: 0.9.0
+version: 1.9.0
 appVersion: "0.9.0"
 description: |
   Eclipse hawkBit™ Helm chart for Kubernetes
@@ -15,33 +15,7 @@ keywords:
   - update-server
   - helm
   - kubernetes
-sources:
-  - https://github.com/eclipse/hawkbit
-maintainers:
-  - name: Fabio Craviolatti
-    email: fabio.craviolatti@lutech.it
-# Copyright (c) 2020, 2023 Contributors to the Eclipse Foundation
-#
-# See the NOTICE file(s) distributed with this work for additional
-# information regarding copyright ownership.
-#
-# This program and the accompanying materials are made available under the
-# terms of the Eclipse Public License 2.0 which is available at
-# http://www.eclipse.org/legal/epl-2.0
-#
-# SPDX-License-Identifier: EPL-2.0
----
-apiVersion: v2
-version: 1.7.0
-appVersion: "0.5.0-mysql"
-description: |
-   Eclipse hawkBit™ is a domain independent back-end framework for rolling out software updates
-   to constrained edge devices as well as more powerful controllers and gateways connected to
-   IP based networking infrastructure.
-name: hawkbit
-keywords:
   - iot-chart
-home: https://www.eclipse.org/hawkbit/
 sources:
 - https://github.com/eclipse/hawkbit
 - https://github.com/eclipse/packages
@@ -53,12 +27,14 @@ maintainers:
   email: axel.koehler@kiwigrid.com
 - name: ctron
   email: ctron@dentrassi.de
+- name: Fabio Craviolatti
+  email: fabio.craviolatti@lutech.it
 dependencies:
 - name: mysql
-  version: ^9.x
+  version: ^13.x
   repository: "oci://registry-1.docker.io/bitnamicharts"
   condition: mysql.enabled
 - name: rabbitmq
-  version: ^10.x
+  version: ^16.x
   repository: "oci://registry-1.docker.io/bitnamicharts"
   condition: rabbitmq.enabled
