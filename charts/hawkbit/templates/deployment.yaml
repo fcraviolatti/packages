@@ -39,8 +39,9 @@ spec:
                 secretKeyRef:
                   name: {{ include "hawkbit.fullname" . }}
                   key: "SPRING_APPLICATION_JSON"
+            {{- if .Values.rabbitmq.enabled }}
             - name: "SPRING_RABBITMQ_HOST"
-              value: "{{ if .Values.rabbitmq.enabled }}{{ .Release.Name }}-rabbitmq{{ else }}{{ .Values.env.springRabbitmqHost }}{{ end }}"
+              value: "{{ .Release.Name }}-rabbitmq"
             - name: "SPRING_RABBITMQ_USERNAME"
               value: "{{ .Values.env.springRabbitmqUsername }}"
             - name: "SPRING_RABBITMQ_PASSWORD"
@@ -48,6 +49,7 @@ spec:
                 secretKeyRef:
                   name: "{{ template "hawkbit.fullname" . }}-rabbitmq-pass"
                   key: "rabbitmq-pass"
+            {{- end }}
             {{- if .Values.fileStorage.enabled }}
             - name: "org.eclipse.hawkbit.repository.file.path"
               value: {{ .Values.fileStorage.mountPath }}
