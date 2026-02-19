@@ -44,13 +44,20 @@ serviceSimpleUI:
   port: 8088
   annotations: {}
 
+
 livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8080
   initialDelaySeconds: 240
   timeoutSeconds: 5
   periodSeconds: 30
   failureThreshold: 3
 
 readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8080
   initialDelaySeconds: 120
   timeoutSeconds: 5
   periodSeconds: 10
@@ -62,7 +69,11 @@ ingress:
   annotations: {}
   hosts:
     - host: hawkbit.local
-      paths: []
+      paths:
+        - /rest
+        - /swagger-ui
+        - /v3
+        - /
   tls: []
 
 resources: {}
