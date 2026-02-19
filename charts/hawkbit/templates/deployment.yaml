@@ -24,7 +24,7 @@ spec:
         - name: hawkbit-db-init
           image: {{ .Values.image.initContainer | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["java", "-jar", "/app/hawkbit-repository-jpa-init.jar", "migrate"]
+          args: ["migrate"]
           env:
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:mariadb://{{ .Values.mariadb.host }}:{{ .Values.mariadb.port }}/{{ .Values.mariadb.database }}"
