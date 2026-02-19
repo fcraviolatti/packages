@@ -94,7 +94,7 @@ configMap:
   mountPath: "/config"
 
 spring:
-  profiles: "mariadb"
+  profiles: "mysql"
 
 config:
   application:
