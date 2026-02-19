@@ -7,7 +7,6 @@ metadata:
     chart: {{ include "hawkbit.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-  annotations:
     {{- toYaml .Values.serviceSimpleUI.annotations | nindent 4 }}
 spec:
   type: {{ .Values.serviceSimpleUI.type }}
