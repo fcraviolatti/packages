@@ -43,7 +43,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "hawkbit.fullname" . }}
                   key: "SPRING_APPLICATION_JSON"
-            {{- if .Values.rabbitmq.enabled }}
+            {{- if or .Values.rabbitmq.enabled .Values.rabbitmq.external }}
             - name: "SPRING_RABBITMQ_HOST"
               value: "{{ if .Values.rabbitmq.host }}{{ .Values.rabbitmq.host }}{{ else }}{{ .Release.Name }}-rabbitmq{{ end }}"
             - name: "SPRING_RABBITMQ_PORT"
