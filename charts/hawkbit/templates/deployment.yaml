@@ -25,6 +25,13 @@ spec:
           image: {{ .Values.image.initContainer | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args: ["migrate"]
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mariadb://{{ .Values.mariadb.host }}:{{ .Values.mariadb.port }}/{{ .Values.mariadb.database }}"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: {{ .Values.mariadb.username }}
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: {{ .Values.mariadb.password }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 {{- end }}
