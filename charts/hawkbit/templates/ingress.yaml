@@ -38,9 +38,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ if eq .service "hawkbit-simple-ui" }}{{ include "hawkbit.simpleui.fullname" $ }}{{ else }}{{ include "hawkbit.fullname" $ }}{{ end }}
+                name: {{ if eq . "/" }}{{ include "hawkbit.simpleui.fullname" $ }}{{ else }}{{ include "hawkbit.fullname" $ }}{{ end }}
                 port:
-                  number: {{ if eq .service "hawkbit-simple-ui" }}{{ $.Values.serviceSimpleUI.port }}{{ else }}{{ $.Values.service.port }}{{ end }}
+                  number: {{ if eq . "/" }}{{ $.Values.serviceSimpleUI.port }}{{ else }}{{ $.Values.service.port }}{{ end }}
         {{- end }}
   {{- end }}
 {{- end }}
