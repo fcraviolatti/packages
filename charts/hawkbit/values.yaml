@@ -5,103 +5,113 @@
 #
 # This program and the accompanying materials are made available under the
 # terms of the Eclipse Public License 2.0 which is available at
-# http://www.eclipse.org/legal/epl-2.0
-#
-# SPDX-License-Identifier: EPL-2.0
----
-# Default values for hawkbit.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+
+
+
+  minAvailable: 1
+  enabled: true
+
+fullnameOverride: ""
+    # traefik.ingress.kubernetes.io/affinity: "true"
+  initialDelaySeconds: 120
+routes:
+  pvcSize: "1Gi"
+  springDatasourceDb: "hawkbit"
+  springRabbitmqUsername: "hawkbit"
+  # JAVA_TOOL_OPTIONS: "-Xms1024m -Xmx1024m"
+resources: {}
+# hawkbit Helm chart values for 0.9.0
 
 image:
   repository: "hawkbit/hawkbit-update-server"
-  tag: 0.5.0-mysql
+  tag: "0.9.0"
   pullPolicy: IfNotPresent
 
-replicaCount: 1
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  repository: "hawkbit/hawkbit-simple-ui"
+  tag: "0.9.0"
+  pullPolicy: IfNotPresent
 
-## podDisruptionBudget configuration
-podDisruptionBudget:
-  enabled: false
-  minAvailable: 1
+replicaCount: 2
 
-## Pod Security Context
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-securityContext:
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   enabled: true
-  # 65534 is the uid of user nobody in the docker image
-  fsGroup: 65534
-  runAsUser: 65534
-  extra: {}
-
-## strategy used to replace old Pods by new ones
-## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-updateStrategy:
-  ## default is re-create, because of possible database migrations
-  type: Recreate
-
-nameOverride: ""
-fullnameOverride: ""
+  minAvailable: 1
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
   annotations: {}
-    # traefik.ingress.kubernetes.io/affinity: "true"
 
-livenessProbe:
+serviceSimpleUI:
+  type: ClusterIP
+  port: 8088
+  annotations: {}
+
+resources:
+  limits:
+    cpu: "2"
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+  # limits:
   initialDelaySeconds: 240
   timeoutSeconds: 5
+  periodSeconds: 30
+  failureThreshold: 3
+
 readinessProbe:
   initialDelaySeconds: 120
   timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
 
-ingress:
-  enabled: false
-  ingressClassName:
+  #  cpu: 500m
+  enabled: true
+  ingressClassName: traefik
   annotations: {}
-    # ingress.kubernetes.io/ssl-redirect: "true"
-    # kubernetes.io/tls-acme: "true"
   hosts:
     - host: hawkbit.local
-      paths: []
+      paths:
+        - path: /rest
+          service: hawkbit
+        - path: /swagger-ui
+          service: hawkbit
+        - path: /v3
+          service: hawkbit
+        - path: /
+          service: hawkbit-simple-ui
   tls: []
-  #  - secretName: hawkbit-tls
-  #    hosts:
-  #      - hawkbit.local
 
-routes:
-  enabled: false
-  tls: true
-
-# enable local file storage
-fileStorage:
-  enabled: true
-  pvcSize: "1Gi"
-  mountPath: "/var/lib/hawkbit-storage"
-
-# env vars for configuration
-env:
-  springDatasourceHost: "hawkbit-mysql"
-  springDatasourceDb: "hawkbit"
-  # if springDatasourceUrl is set override default mysql db url
-  springDatasourceUrl: ""
-  springRabbitmqHost: "hawkbit-rabbitmq"
-  springRabbitmqUsername: "hawkbit"
-  springRabbitmqPassword: "hawkbit"
-
-# optional env vars
-extraEnv: {}
-  # JAVA_TOOL_OPTIONS: "-Xms1024m -Xmx1024m"
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #  cpu: 500m
   #  memory: 1536Mi
+  host: hawkbit-mariadb
+  port: 3306
+  database: hawkbit
+  username: hawkbit
+  password: hawkbit-db-password-2026
+
+minio:
+  host: hawkbit-minio-hl
+  port: 9000
+  accessKey: minio-access-key
+  secretKey: minio-secret-key
+
+keycloak:
+  enabled: false
+  url: ""
+
+initDb:
+  enabled: true
+  image: "hawkbit/hawkbit-init-db:0.9.0"
+  resources: {}
+
+extraEnv: {}
+
+nodeSelector: {}
+affinity: {}
+tolerations: []
   # requests:
   #  cpu: 100m
   #  memory: 1024Mi

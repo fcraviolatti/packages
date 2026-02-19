@@ -1,14 +1,16 @@
 {{- if and .Values.podDisruptionBudget.enabled (gt .Values.replicaCount 1.0) -}}
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "hawkbit.fullname" . }}
   labels:
-{{ include "hawkbit.labels" . | indent 4 }}
+    app: {{ include "hawkbit.name" . }}
+    chart: {{ include "hawkbit.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "hawkbit.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
-  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
-{{- end }}
+      app: {{ include "hawkbit.name" . }}
+      release: {{ .Release.Name }}

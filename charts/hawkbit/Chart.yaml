@@ -1,3 +1,25 @@
+apiVersion: v2
+name: hawkbit
+version: 0.9.0
+appVersion: "0.9.0"
+description: |
+  Eclipse hawkBit™ Helm chart for Kubernetes
+  - Supports MariaDB, MinIO, Keycloak, Simple UI
+  - Compatible with Kubernetes >= 1.22
+  - Uses only stable APIs (policy/v1, networking.k8s.io/v1)
+  - Includes init-db job for schema setup
+  - Highly configurable via values.yaml
+keywords:
+  - hawkbit
+  - ota
+  - update-server
+  - helm
+  - kubernetes
+sources:
+  - https://github.com/eclipse/hawkbit
+maintainers:
+  - name: Fabio Craviolatti
+    email: fabio.craviolatti@lutech.it
 # Copyright (c) 2020, 2023 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional

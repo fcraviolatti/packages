@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hawkbit.simpleui.fullname" . }}
+  labels:
+    app: {{ include "hawkbit.simpleui.name" . }}
+    chart: {{ include "hawkbit.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "hawkbit.simpleui.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "hawkbit.simpleui.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: simple-ui
+          image: "{{ .Values.simpleUIImage.repository }}:{{ .Values.simpleUIImage.tag }}"
+          imagePullPolicy: {{ .Values.simpleUIImage.pullPolicy }}
+          ports:
+            - containerPort: 8088
+          env: []
