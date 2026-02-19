@@ -1,5 +1,8 @@
 rabbitmq:
   enabled: true
+  # host: ""       # Override to use an external RabbitMQ (e.g. rabbitmq.rabbitmq-dev.svc.cluster.local)
+  #                # If empty, defaults to {{ .Release.Name }}-rabbitmq (in-cluster subchart)
+  # port: 5672     # Override AMQP port (default: 5672)
 # Copyright (c) 2019, 2021 Contributors to the Eclipse Foundation
 # SPDX-License-Identifier: EPL-2.0
 ---

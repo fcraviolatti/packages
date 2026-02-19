@@ -45,7 +45,9 @@ spec:
                   key: "SPRING_APPLICATION_JSON"
             {{- if .Values.rabbitmq.enabled }}
             - name: "SPRING_RABBITMQ_HOST"
-              value: "{{ .Release.Name }}-rabbitmq"
+              value: "{{ if .Values.rabbitmq.host }}{{ .Values.rabbitmq.host }}{{ else }}{{ .Release.Name }}-rabbitmq{{ end }}"
+            - name: "SPRING_RABBITMQ_PORT"
+              value: "{{ if .Values.rabbitmq.port }}{{ .Values.rabbitmq.port }}{{ else }}5672{{ end }}"
             - name: "SPRING_RABBITMQ_USERNAME"
               value: "{{ .Values.env.springRabbitmqUsername }}"
             - name: "SPRING_RABBITMQ_PASSWORD"
