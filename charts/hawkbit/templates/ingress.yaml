@@ -6,7 +6,10 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}
   labels:
-{{ include "hawkbit.labels" . | indent 4 }}
+    app: {{ include "hawkbit.name" . }}
+    chart: {{ include "hawkbit.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -32,18 +35,12 @@ spec:
         paths:
         {{- range .paths }}
           - path: {{ . }}
-            {{- if eq $apiVersion "networking.k8s.io/v1" }}
             pathType: Prefix
             backend:
               service:
-                name: {{ $fullName }}
+                name: {{ if eq .service "hawkbit-simple-ui" }}{{ include "hawkbit.simpleui.fullname" $ }}{{ else }}{{ include "hawkbit.fullname" $ }}{{ end }}
                 port:
-                  name: http
-            {{- else }}
-            backend:
-              serviceName: {{ $fullName }}
-              servicePort: http
-            {{- end }}
+                  number: {{ if eq .service "hawkbit-simple-ui" }}{{ $.Values.serviceSimpleUI.port }}{{ else }}{{ $.Values.service.port }}{{ end }}
         {{- end }}
   {{- end }}
 {{- end }}
