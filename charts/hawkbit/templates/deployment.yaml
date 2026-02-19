@@ -18,6 +18,10 @@ spec:
       labels:
         app: {{ include "hawkbit.name" . }}
         release: {{ .Release.Name }}
+      {{- with .Values.podTemplate.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       containers:
         - name: hawkbit
@@ -54,16 +58,26 @@ spec:
             - name: "org.eclipse.hawkbit.repository.file.path"
               value: {{ .Values.fileStorage.mountPath }}
             {{- end }}
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: "file:{{ .Values.configMap.mountPath }}/application.yaml"
             {{- range $key, $value := .Values.extraEnv }}
             - name: "{{ $key }}"
               value: "{{ $value }}"
             {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: {{ .Values.configMap.mountPath }}
+              readOnly: true
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "hawkbit.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
