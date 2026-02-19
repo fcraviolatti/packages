@@ -1,42 +1,38 @@
 # Copyright (c) 2019, 2021 Contributors to the Eclipse Foundation
-#
-# See the NOTICE file(s) distributed with this work for additional
-# information regarding copyright ownership.
-#
-# This program and the accompanying materials are made available under the
-# terms of the Eclipse Public License 2.0 which is available at
-
-
-
-  minAvailable: 1
-  enabled: true
-
-fullnameOverride: ""
-    # traefik.ingress.kubernetes.io/affinity: "true"
-  initialDelaySeconds: 120
-routes:
-  pvcSize: "1Gi"
-  springDatasourceDb: "hawkbit"
-  springRabbitmqUsername: "hawkbit"
-  # JAVA_TOOL_OPTIONS: "-Xms1024m -Xmx1024m"
-resources: {}
-# hawkbit Helm chart values for 0.9.0
+# SPDX-License-Identifier: EPL-2.0
+---
+# Default values for hawkbit.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
 
 image:
   repository: "hawkbit/hawkbit-update-server"
-  tag: "0.9.0"
+  tag: '0.9.0'
   pullPolicy: IfNotPresent
+  initContainer: "hawkbit/hawkbit-repository-jpa-init"
 
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+simpleUIImage:
   repository: "hawkbit/hawkbit-simple-ui"
   tag: "0.9.0"
   pullPolicy: IfNotPresent
 
 replicaCount: 2
 
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+podDisruptionBudget:
   enabled: true
   minAvailable: 1
+
+securityContext:
+  enabled: true
+  fsGroup: 65534
+  runAsUser: 65534
+  extra: {}
+
+updateStrategy:
+  type: RollingUpdate
+
+nameOverride: ""
+fullnameOverride: ""
 
 service:
   type: ClusterIP
@@ -48,15 +44,7 @@ serviceSimpleUI:
   port: 8088
   annotations: {}
 
-resources:
-  limits:
-    cpu: "2"
-    memory: 2Gi
-  requests:
-    cpu: 500m
-    memory: 1Gi
-
-  # limits:
+livenessProbe:
   initialDelaySeconds: 240
   timeoutSeconds: 5
   periodSeconds: 30
@@ -68,24 +56,46 @@ readinessProbe:
   periodSeconds: 10
   failureThreshold: 3
 
-  #  cpu: 500m
+ingress:
   enabled: true
   ingressClassName: traefik
   annotations: {}
   hosts:
     - host: hawkbit.local
-      paths:
-        - path: /rest
-          service: hawkbit
-        - path: /swagger-ui
-          service: hawkbit
-        - path: /v3
-          service: hawkbit
-        - path: /
-          service: hawkbit-simple-ui
+      paths: []
   tls: []
 
-  #  memory: 1536Mi
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+podTemplate:
+  annotations: {}
+
+extraVolumes: []
+extraVolumeMounts: []
+
+configMap:
+  mountPath: "/config"
+
+spring:
+  profiles: "mariadb"
+
+config:
+  application:
+    server:
+      useForwardHeaders: true
+    hawkbit:
+    spring:
+      cloud:
+        stream:
+          bindings:
+            default:
+              group: "hawkbit"
+
+mariadb:
   host: hawkbit-mariadb
   port: 3306
   database: hawkbit
@@ -107,107 +117,4 @@ initDb:
   image: "hawkbit/hawkbit-init-db:0.9.0"
   resources: {}
 
-extraEnv: {}
-
-nodeSelector: {}
-affinity: {}
-tolerations: []
-  # requests:
-  #  cpu: 100m
-  #  memory: 1024Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-podTemplate:
-  annotations: {}
-
-extraVolumes: []
-extraVolumeMounts: []
-
-configMap:
-  mountPath: "/opt/hawkbit/config"
-
-spring:
-  profiles: "mysql"
-
-config:
-  application:
-    server:
-      useForwardHeaders: true
-    hawkbit:
-      ## Configuration for the device management federation
-      ## ref: https://www.eclipse.org/hawkbit/apis/dmf_api/
-      ## These configuration will become available once https://github.com/eclipse/hawkbit/pull/890 is merged
-      # dmf:
-      #   hono:
-      #     enabled: false
-      #     tenant-list-uri: "http://[DEVICE_REGISTRY_HOST]:8080/admin/tenants"
-      #     device-list-uri: "http://[DEVICE_REGISTRY_HOST]:8080/admin/$$tenantId/devices"
-      #     credentials-list-uri: "http://[DEVICE_REGISTRY_HOST]:8080/v1/credentials/$$tenantId/$$deviceId"
-      #     authentication-method: "oidc"
-      #     username: "[KEYCLOAK_HAWKBIT_USERNAME]"
-      #     oidc-token-uri: "http://[KEYCLOAK_HOST]:8080/auth/realms/master/protocol/openid-connect/token"
-      #     oidc-client-id: "[KEYCLOAK_DEVICE_REGISTRY_CLIENT_ID]"
-    spring:
-      cloud:
-        stream:
-          bindings:
-            default:
-              group: "hawkbit"
-            device-created:
-              destination: "device-registry.device-created"
-            device-updated:
-              destination: "device-registry.device-updated"
-            device-deleted:
-              destination: "device-registry.device-deleted"
-      security:
-        user:
-          name: admin
-  secrets:
-    hawkbit:
-      dmf:
-        hono:
-          password: "[KEYCLOAK_HAWKBIT_USER_PASSWORD]"
-    spring:
-      security:
-        user:
-          # the "{noop}" prefix is needed!
-          password: "{noop}admin"
-      datasource:
-        username: hawkbit
-        password: hawkbit
-
-
-## dependency charts config
-## ref: https://github.com/bitnami/charts/blob/master/bitnami/mysql/values.yaml
-mysql:
-  enabled: true
-  primary:
-    persistence:
-      enabled: true
-  volumePermissions:
-    enabled: true
-  architecture: standalone
-  auth:
-    username: hawkbit
-    password: hawkbit
-    database: hawkbit
-  metrics:
-    enabled: true
-
-## ref: https://github.com/bitnami/charts/blob/master/bitnami/rabbitmq/values.yaml
-rabbitmq:
-  enabled: true
-  persistence:
-    enabled: true
-  volumePermissions:
-    enabled: true
-  auth:
-    username: hawkbit
-    password: hawkbit
-  metrics:
-    enabled: true
+extraEnv: []
