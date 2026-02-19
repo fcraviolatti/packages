@@ -19,14 +19,14 @@ spec:
         app: {{ include "hawkbit.name" . }}
         release: {{ .Release.Name }}
     spec:
-      {{- if .Values.image.initContainer }}
+{{- if .Values.image.initContainer }}
       initContainers:
         - name: hawkbit-db-init
           image: {{ .Values.image.initContainer | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
-            {{- toYaml .Values.resources | nindent 8 }}
-      {{- end }}
+            {{- toYaml .Values.resources | nindent 12 }}
+{{- end }}
       containers:
         - name: hawkbit
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
