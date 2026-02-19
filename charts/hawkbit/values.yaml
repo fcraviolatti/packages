@@ -112,9 +112,5 @@ keycloak:
   enabled: false
   url: ""
 
-initDb:
-  enabled: true
-  image: "hawkbit/hawkbit-init-db:0.9.0"
-  resources: {}
 
 extraEnv: []
