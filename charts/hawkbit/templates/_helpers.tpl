@@ -14,13 +14,9 @@ hawkbit-simple-ui
 {{- printf "%s-%s" .Release.Name (include "hawkbit.simpleui.name" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+
 {{- define "hawkbit.chart" -}}
 {{ .Chart.Name }}-{{ .Chart.Version }}
-{{- end -}}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 {{/*
