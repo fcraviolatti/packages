@@ -24,6 +24,7 @@ spec:
         - name: hawkbit-db-init
           image: {{ .Values.image.initContainer | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: ["migrate"]
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 {{- end }}
