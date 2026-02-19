@@ -1,3 +1,5 @@
+rabbitmq:
+  enabled: true
 # Copyright (c) 2019, 2021 Contributors to the Eclipse Foundation
 # SPDX-License-Identifier: EPL-2.0
 ---
