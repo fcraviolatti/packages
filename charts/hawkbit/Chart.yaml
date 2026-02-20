@@ -1,6 +1,6 @@
 apiVersion: v2
 name: hawkbit
-version: 1.9.4
+version: 1.9.5
 appVersion: "0.9.0"
 description: |
   Eclipse hawkBit™ Helm chart for Kubernetes
