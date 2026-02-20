@@ -28,3 +28,15 @@ spec:
           env:
             - name: HAWKBIT_SERVER_MGMT_URL
               value: "http://{{ include "hawkbit.fullname" . }}:{{ .Values.service.port }}"
+            - name: HAWKBIT_TENANT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "hawkbit.fullname" . }}
+                  key: SIMPLE_UI_USERNAME
+                  optional: true
+            - name: HAWKBIT_TENANT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "hawkbit.fullname" . }}
+                  key: SIMPLE_UI_PASSWORD
+                  optional: true

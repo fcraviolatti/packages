@@ -130,3 +130,9 @@ keycloak:
 
 
 extraEnv: []
+
+# Simple UI credentials to authenticate against the hawkbit backend REST API
+# Maps to hawkbit.tenant.username / hawkbit.tenant.password in hawkbit-sdk
+simpleUI:
+  username: "admin"
+  password: "admin"
