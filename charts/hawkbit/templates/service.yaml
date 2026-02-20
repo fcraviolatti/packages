@@ -19,5 +19,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: {{ include "hawkbit.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app: {{ include "hawkbit.name" . }}
+    release: {{ .Release.Name }}
