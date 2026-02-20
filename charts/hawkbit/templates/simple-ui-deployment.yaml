@@ -25,4 +25,6 @@ spec:
           imagePullPolicy: {{ .Values.simpleUIImage.pullPolicy }}
           ports:
             - containerPort: 8088
-          env: []
+          env:
+            - name: HAWKBIT_SERVER_MGMT_URL
+              value: "http://{{ include "hawkbit.fullname" . }}:{{ .Values.service.port }}"
