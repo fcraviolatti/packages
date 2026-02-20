@@ -68,6 +68,13 @@ spec:
             - name: "{{ $key }}"
               value: "{{ $value }}"
             {{- end }}
+            {{- range .Values.extraEnvFrom }}
+            - name: "{{ .name }}"
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .secretName }}"
+                  key: "{{ .secretKey }}"
+            {{- end }}
           volumeMounts:
             - name: config
               mountPath: {{ .Values.configMap.mountPath }}

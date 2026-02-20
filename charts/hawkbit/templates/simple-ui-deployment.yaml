@@ -35,8 +35,15 @@ spec:
                   key: SIMPLE_UI_USERNAME
                   optional: true
             - name: HAWKBIT_TENANT_PASSWORD
+              {{- if .Values.simpleUI.credentialsSecretName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.simpleUI.credentialsSecretName }}
+                  key: {{ .Values.simpleUI.credentialsSecretKey | default "SIMPLE_UI_PASSWORD" }}
+              {{- else }}
               valueFrom:
                 secretKeyRef:
                   name: {{ include "hawkbit.fullname" . }}
                   key: SIMPLE_UI_PASSWORD
                   optional: true
+              {{- end }}
