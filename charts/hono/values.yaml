@@ -245,7 +245,7 @@ adapters:
     enabled: true
     # imageName contains the name (excluding registry)
     # of the container image to use for the AMQP adapter
-    imageName: "eclipse/hono-adapter-amqp"
+    imageName: "eclipsehono/hono-adapter-amqp"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -374,7 +374,7 @@ adapters:
     enabled: false
     # imageName contains the name (excluding registry)
     # of the container image to use for the CoAP adapter
-    imageName: "eclipse/hono-adapter-coap"
+    imageName: "eclipsehono/hono-adapter-coap"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -501,7 +501,7 @@ adapters:
     enabled: true
     # imageName contains the name (excluding registry)
     # of the container image to use for the HTTP adapter
-    imageName: "eclipse/hono-adapter-http"
+    imageName: "eclipsehono/hono-adapter-http"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -630,7 +630,7 @@ adapters:
     enabled: false
     # imageName contains the name (excluding registry)
     # of the container image to use for the LoRa adapter
-    imageName: "eclipse/hono-adapter-lora"
+    imageName: "eclipsehono/hono-adapter-lora"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -758,7 +758,7 @@ adapters:
     enabled: true
     # imageName contains the name (excluding registry)
     # of the container image to use for the MQTT adapter
-    imageName: "eclipse/hono-adapter-mqtt"
+    imageName: "eclipsehono/hono-adapter-mqtt"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -887,7 +887,7 @@ authServer:
 
   # imageName contains the name (excluding registry)
   # of the container image to use for the Auth Server
-  imageName: "eclipse/hono-service-auth"
+  imageName: "eclipsehono/hono-service-auth"
   # imageTag contains the tag of the container image to deploy.
   # If not specified, the value of the honoImagesTag property is used.
   # imageTag:
@@ -1152,7 +1152,7 @@ deviceRegistryExample:
   embeddedJdbcDeviceRegistry:
     # imageName contains the name (excluding registry)
     # of the container image for the example embedded jdbc device registry.
-    imageName: "eclipse/hono-service-device-registry-jdbc"
+    imageName: "eclipsehono/hono-service-device-registry-jdbc"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -1225,7 +1225,7 @@ deviceRegistryExample:
   mongoDBBasedDeviceRegistry:
     # imageName contains the name (excluding registry)
     # of the container image for the example MongoDB based device registry.
-    imageName: "eclipse/hono-service-device-registry-mongodb"
+    imageName: "eclipsehono/hono-service-device-registry-mongodb"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -1308,7 +1308,7 @@ deviceRegistryExample:
   jdbcBasedDeviceRegistry:
     # imageName contains the name (excluding registry)
     # of the container image for the example jdbc based device registry.
-    imageName: "eclipse/hono-service-device-registry-jdbc"
+    imageName: "eclipsehono/hono-service-device-registry-jdbc"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -1459,7 +1459,7 @@ commandRouterService:
 
   # imageName contains the name (excluding registry)
   # of the container image to use for the Command Router service
-  imageName: "eclipse/hono-service-command-router-infinispan"
+  imageName: "eclipsehono/hono-service-command-router-infinispan"
   # imageTag contains the tag of the container image to deploy.
   # If not specified, the value of the honoImagesTag property is used.
   # imageTag:
