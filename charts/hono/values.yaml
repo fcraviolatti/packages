@@ -243,6 +243,10 @@ adapters:
   amqp:
     # enabled indicates if Hono's AMQP 1.0 adapter should be deployed.
     enabled: true
+    # secretFromExternalSecret: if true, Helm does NOT generate the adapter-amqp-conf Secret.
+    # An ExternalSecret (ESO) must create a Secret named {release}-adapter-amqp-conf
+    # with keys: application.yml and adapter.credentials
+    secretFromExternalSecret: false
     # imageName contains the name (excluding registry)
     # of the container image to use for the AMQP adapter
     imageName: "eclipsehono/hono-adapter-amqp"
@@ -372,6 +376,8 @@ adapters:
   coap:
     # enabled indicates if Hono's CoAP adapter should be deployed.
     enabled: false
+    # secretFromExternalSecret: if true, Helm does NOT generate the adapter-coap-conf Secret.
+    secretFromExternalSecret: false
     # imageName contains the name (excluding registry)
     # of the container image to use for the CoAP adapter
     imageName: "eclipsehono/hono-adapter-coap"
@@ -499,6 +505,8 @@ adapters:
   http:
     # enabled indicates if Hono's HTTP adapter should be deployed.
     enabled: true
+    # secretFromExternalSecret: if true, Helm does NOT generate the adapter-http-conf Secret.
+    secretFromExternalSecret: false
     # imageName contains the name (excluding registry)
     # of the container image to use for the HTTP adapter
     imageName: "eclipsehono/hono-adapter-http"
@@ -628,6 +636,8 @@ adapters:
   lora:
     # enabled indicates if Hono's Lora adapter should be deployed.
     enabled: false
+    # secretFromExternalSecret: if true, Helm does NOT generate the adapter-lora-conf Secret.
+    secretFromExternalSecret: false
     # imageName contains the name (excluding registry)
     # of the container image to use for the LoRa adapter
     imageName: "eclipsehono/hono-adapter-lora"
@@ -756,6 +766,8 @@ adapters:
   mqtt:
     # enabled indicates if Hono's MQTT 3.1.1 adapter should be deployed.
     enabled: true
+    # secretFromExternalSecret: if true, Helm does NOT generate the adapter-mqtt-conf Secret.
+    secretFromExternalSecret: false
     # imageName contains the name (excluding registry)
     # of the container image to use for the MQTT adapter
     imageName: "eclipsehono/hono-adapter-mqtt"
@@ -885,6 +897,11 @@ adapters:
 # authServer contains configuration properties for the Auth Server component.
 authServer:
 
+  # secretFromExternalSecret: if true, Helm does NOT generate the service-auth-conf Secret.
+  # An ExternalSecret must create a Secret named {release}-service-auth-conf
+  # with keys: application.yml and permissions.json
+  secretFromExternalSecret: false
+
   # imageName contains the name (excluding registry)
   # of the container image to use for the Auth Server
   imageName: "eclipsehono/hono-service-auth"
@@ -1010,6 +1027,12 @@ authServer:
 # deviceRegistryExample contains configuration properties for the
 # example Device Registry.
 deviceRegistryExample:
+
+  # secretFromExternalSecret: if true, Helm does NOT generate the service-device-registry-conf Secret.
+  # An ExternalSecret must create a Secret named {release}-service-device-registry-conf
+  # with key: application.yml containing the full registry config (including MongoDB credentials).
+  # Use together with mongoDBBasedDeviceRegistry.envSecret to inject credentials via env vars instead.
+  secretFromExternalSecret: false
 
   # enabled indicates whether the example Device Registry
   # should be deployed and used.
@@ -1456,6 +1479,11 @@ mongodb:
 # commandRouterService contains configuration properties for the
 # Command Router service.
 commandRouterService:
+
+  # secretFromExternalSecret: if true, Helm does NOT generate the service-command-router-conf Secret.
+  # An ExternalSecret must create a Secret named {release}-service-command-router-conf
+  # with keys: application.yml, dns-cache-config.properties, adapter.credentials (and optionally cache-config.xml)
+  secretFromExternalSecret: false
 
   # imageName contains the name (excluding registry)
   # of the container image to use for the Command Router service
