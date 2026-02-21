@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Contributors to the Eclipse Foundation
+# Copyright (c) 2023 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -8,7 +8,6 @@
 # http://www.eclipse.org/legal/epl-2.0
 #
 # SPDX-License-Identifier: EPL-2.0
-#
 {{- if and .Values.thingsSearch.podMonitor.enabled .Values.global.prometheus.port -}}
 {{- if .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" -}}
 ---
@@ -16,6 +15,7 @@ kind: PodMonitor
 apiVersion: monitoring.coreos.com/v1
 metadata:
   name: {{ include "ditto.fullname" . }}-thingssearch
+  namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "ditto.name" . }}-thingssearch
 {{ include "ditto.labels" . | indent 4 }}

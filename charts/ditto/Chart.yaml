@@ -1,39 +1,25 @@
-# Copyright (c) 2019, 2022 Contributors to the Eclipse Foundation
-#
-# See the NOTICE file(s) distributed with this work for additional
-# information regarding copyright ownership.
-#
-# This program and the accompanying materials are made available under the
-# terms of the Eclipse Public License 2.0 which is available at
-# http://www.eclipse.org/legal/epl-2.0
-#
-# SPDX-License-Identifier: EPL-2.0
-#
----
 apiVersion: v2
-name: ditto
-description: |
-  DEPRECATED chart of Eclipse Ditto™, which is a technology in the IoT implementing a software pattern called “digital twins”.
-  A digital twin is a virtual, cloud based, representation of his real world counterpart
-  (real world “Things”, e.g. devices like sensors, smart heating, connected cars, smart grids, EV charging stations etc).
-type: application
-version: 3.2.3
-appVersion: 3.2.1
-# The eclipse-iot-packages Ditto chart is deprecated and no longer maintained.
-# Its location moved to https://github.com/eclipse-ditto/ditto/tree/master/deployment/helm and
-# it is now server from Docker Hub at: https://hub.docker.com/r/eclipse/ditto
-deprecated: true
+appVersion: 3.8.12
+dependencies:
+- condition: mongodb.enabled
+  name: mongodb
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: ^16.x
+description: 'Eclipse Ditto™ is a technology in the IoT implementing a software pattern
+  called “digital twins”. A digital twin is a virtual, cloud based, representation
+  of his real world counterpart (real world “Things”, e.g. devices like sensors, smart
+  heating, connected cars, smart grids, EV charging stations etc). '
+home: https://www.eclipse.dev/ditto
+icon: https://www.eclipse.dev/ditto/images/ditto.svg
 keywords:
 - iot-chart
 - digital-twin
 - IoT
-home: https://www.eclipse.org/ditto
+maintainers:
+- email: thomas.jaeckle@beyonnex.io
+  name: thjaeckle
+name: ditto
 sources:
 - https://github.com/eclipse-ditto/ditto
-- https://github.com/eclipse/packages
-icon: https://www.eclipse.org/ditto/images/ditto.svg
-dependencies:
-- name: mongodb
-  repository: https://charts.bitnami.com/bitnami
-  version: ^12.x
-  condition: mongodb.enabled
+type: application
+version: 3.8.12

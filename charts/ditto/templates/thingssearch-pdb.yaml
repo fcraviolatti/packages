@@ -1,4 +1,4 @@
-# Copyright (c) 2019 Contributors to the Eclipse Foundation
+# Copyright (c) 2023 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -8,13 +8,16 @@
 # http://www.eclipse.org/legal/epl-2.0
 #
 # SPDX-License-Identifier: EPL-2.0
-#
-{{- if and .Values.things.podDisruptionBudget.enabled (gt .Values.things.replicaCount 1.0) -}}
+{{- if and .Values.thingsSearch.podDisruptionBudget.enabled (gt .Values.thingsSearch.replicaCount 1.0) -}}
+{{- if and .Values.thingsSearch.podDisruptionBudget.minAvailable .Values.thingsSearch.podDisruptionBudget.maxUnavailable }}
+{{- fail "thingsSearch.podDisruptionBudget cannot have both minAvailable and maxUnavailable set. Please set only one of them." }}
+{{- end }}
 ---
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "ditto.fullname" . }}-thingssearch
+  namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "ditto.name" . }}-thingssearch
 {{ include "ditto.labels" . | indent 4 }}
@@ -23,5 +26,9 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "ditto.name" . }}-thingssearch
       app.kubernetes.io/instance: {{ .Release.Name }}
-  minAvailable: {{ .Values.things.podDisruptionBudget.minAvailable }}
+{{- if .Values.thingsSearch.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.thingsSearch.podDisruptionBudget.minAvailable }}
+{{- else }}
+  maxUnavailable: {{ .Values.thingsSearch.podDisruptionBudget.maxUnavailable }}
+{{- end }}
 {{- end }}

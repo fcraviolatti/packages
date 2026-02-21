@@ -1,4 +1,4 @@
-# Copyright (c) 2019, 2020 Contributors to the Eclipse Foundation
+# Copyright (c) 2023 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -8,15 +8,16 @@
 # http://www.eclipse.org/legal/epl-2.0
 #
 # SPDX-License-Identifier: EPL-2.0
-#
+{{- $name := include "ditto.name" . -}}
 {{- if .Values.swaggerui.enabled -}}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "ditto.fullname" . }}-swaggerui
+  namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "ditto.name" . }}-swaggerui
+    app.kubernetes.io/name: {{ $name }}-swaggerui
 {{ include "ditto.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.swaggerui.replicaCount }}
@@ -26,12 +27,12 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "ditto.name" . }}-swaggerui
+      app.kubernetes.io/name: {{ $name }}-swaggerui
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "ditto.name" . }}-swaggerui
+        app.kubernetes.io/name: {{ $name }}-swaggerui
         app.kubernetes.io/instance: {{ .Release.Name }}
         {{- with .Values.swaggerui.additionalLabels }}
         {{- toYaml . | nindent 8 }}
@@ -45,27 +46,50 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.rbac.enabled }}
+      serviceAccountName: {{ template "ditto.serviceAccountName" . }}
+      {{- end }}
       initContainers:
-        - name: {{ .Chart.Name }}-init
-          image: "{{ .Values.swaggerui.image.repository }}:{{ .Values.swaggerui.image.tag }}"
+        - name: {{ .Chart.Name }}-swaggerui-init
+          image: "docker.io/curlimages/curl:8.13.0"
           imagePullPolicy: {{ .Values.swaggerui.image.pullPolicy }}
           command:
             - sh
             - -ec
             - |
-               mkdir -p /usr/share/nginx/html/openapi 
-               curl -sL https://raw.githubusercontent.com/eclipse/ditto/{{ .Chart.AppVersion }}/documentation/src/main/resources/openapi/ditto-api-2.yml -o /usr/share/nginx/html/openapi/ditto-openapi-2.yaml               
-               cp -rv /etc/nginx/. /init-config/
-               cp -rv /usr/share/nginx/html/. /init-content/
-               mkdir /var/lib/nginx/logs
-               mkdir /var/lib/nginx/tmp
+              curl -sL https://raw.githubusercontent.com/eclipse/ditto/{{ .Chart.AppVersion }}/documentation/src/main/resources/openapi/ditto-api-2.yml -o /init-config/ditto-api-2.yml
+              sed --in-place "\=- url: 'https://ditto.eclipseprojects.io/'=d" /init-config/ditto-api-2.yml
+              sed --in-place "/description: online Ditto Sandbox/d" /init-config/ditto-api-2.yml
+              echo "removing Google auth from ditto-api-2.yml"
+              sed --in-place "/- Google:/,+1d" /init-config/ditto-api-2.yml
+              sed --in-place "/  Google:/,+9d" /init-config/ditto-api-2.yml
+              {{- if or (not .Values.gateway.config.authentication.enablePreAuthentication) .Values.global.jwtOnly }}
+              echo "removing NginxBasic auth from ditto-api-2.yml"
+              sed --in-place "/- NginxBasic: \[]/d" /init-config/ditto-api-2.yml
+              sed --in-place "/  NginxBasic:/,+3d" /init-config/ditto-api-2.yml
+              {{- end }}
+              {{- if eq .Values.gateway.config.authentication.devops.authMethod "oauth2" }}
+              echo "removing DevOpsBasic auth from ditto-api-2.yml"
+              sed --in-place "/- DevOpsBasic: \[]/d" /init-config/ditto-api-2.yml
+              sed --in-place "/  DevOpsBasic:/,+3d" /init-config/ditto-api-2.yml
+              {{- else }}
+              echo "removing DevOpsBearer auth from ditto-api-2.yml"
+              sed --in-place "/- DevOpsBearer: \[]/d" /init-config/ditto-api-2.yml
+              sed --in-place "/  DevOpsBearer:/,+4d" /init-config/ditto-api-2.yml
+              {{- end }}
+              sed --in-place "s=- url: /=- url: {{ .Values.global.proxyPart }}/=g" /init-config/ditto-api-2.yml
           volumeMounts:
-            - name: swagger-ui-config
+            - name: swagger-ui-init-config
               mountPath: /init-config
-            - name: swagger-ui-content
-              mountPath: /init-content
-            - name: swagger-ui-work
-              mountPath: /var/lib/nginx
+      topologySpreadConstraints:
+      {{- range .Values.swaggerui.topologySpreadConstraints }}
+        - maxSkew: {{ .maxSkew }}
+          topologyKey: {{ .topologyKey }}
+          whenUnsatisfiable: {{ .whenUnsatisfiable }}
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ $name }}-swaggerui
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}-swaggerui
           image: "{{ .Values.swaggerui.image.repository }}:{{ .Values.swaggerui.image.tag }}"
@@ -80,30 +104,36 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          {{- with .Values.swaggerui.resources }}
           resources:
+            requests:
+              cpu: {{ mulf .Values.swaggerui.resources.cpu 1000 }}m
+              memory: {{ .Values.swaggerui.resources.memoryMi }}Mi
+              ephemeral-storage: {{ .Values.swaggerui.resources.ephemeralStorageMi }}Mi
+            limits:
+              # cpu: # don't limit
+              memory: {{ .Values.swaggerui.resources.memoryMi }}Mi
+              ephemeral-storage: {{ .Values.swaggerui.resources.ephemeralStorageMi }}Mi
+          {{- if .Values.openshift.enabled }}
+          {{- with .Values.openshift.securityContext }}
+          securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- else }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 101
+            runAsGroup: 101
+          {{- end }}
           volumeMounts:
-            - name: swagger-ui-cache
-              mountPath: /var/cache/nginx
-            - name: swagger-ui-work
-              mountPath: /var/lib/nginx
-            - name: swagger-ui-config
-              mountPath: /etc/nginx
-            - name: swagger-ui-content
-              mountPath: /usr/share/nginx/html
-            - name: swagger-ui-run
-              mountPath: /run/nginx
+            - name: swagger-ui-init-config
+              mountPath: /usr/share/nginx/html/openapi
+            - name: swaggerui-index
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
       volumes:
-        - name: swagger-ui-cache
+        - name: swagger-ui-init-config
           emptyDir: {}
-        - name: swagger-ui-work
-          emptyDir: {}
-        - name: swagger-ui-config
-          emptyDir: {}
-        - name: swagger-ui-content
-          emptyDir: {}
-        - name: swagger-ui-run
-          emptyDir: {}
+        - name: swaggerui-index
+          configMap:
+            name: {{ .Release.Name }}-swaggerui-config-index-html
 {{- end }}
