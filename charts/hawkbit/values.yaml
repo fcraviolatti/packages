@@ -15,10 +15,15 @@
 
 image:
   repository: "hawkbit/hawkbit-update-server"
-  tag: 0.5.0-mysql
+  tag: "0.9.0"
   pullPolicy: IfNotPresent
 
 replicaCount: 1
+
+# ESO integration — when true, skip generating the SPRING_APPLICATION_JSON secret
+# and use existingSecretName instead (must contain SPRING_APPLICATION_JSON key)
+useExternalSecret: false
+existingSecretName: ""
 
 ## podDisruptionBudget configuration
 podDisruptionBudget:
@@ -76,9 +81,19 @@ routes:
 
 # enable local file storage
 fileStorage:
-  enabled: true
+  enabled: false
   pvcSize: "1Gi"
   mountPath: "/var/lib/hawkbit-storage"
+
+# S3 artifact storage (e.g. SeaweedFS S3-compatible endpoint)
+# Used when fileStorage.enabled is false
+s3:
+  enabled: false
+  endpoint: ""          # e.g. http://seaweedfs-s3.seaweedfs.svc.cluster.local:8333
+  region: "us-east-1"
+  bucket: "hawkbit"
+  accessKeyId: ""       # only used when useExternalSecret: false
+  secretAccessKey: ""   # only used when useExternalSecret: false
 
 # env vars for configuration
 env:
@@ -157,6 +172,13 @@ config:
       security:
         user:
           name: admin
+      artifact:
+        repository:
+          s3:
+            enabled: false
+            bucketName: "hawkbit"
+            region: "us-east-1"
+            endpoint: ""
   secrets:
     hawkbit:
       dmf:
@@ -175,7 +197,7 @@ config:
 ## dependency charts config
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/mysql/values.yaml
 mysql:
-  enabled: true
+  enabled: false
   primary:
     persistence:
       enabled: true
@@ -191,7 +213,7 @@ mysql:
 
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/rabbitmq/values.yaml
 rabbitmq:
-  enabled: true
+  enabled: false
   persistence:
     enabled: true
   volumePermissions:
