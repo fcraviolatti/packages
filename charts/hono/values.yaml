@@ -21,7 +21,7 @@ fullnameOverride: ""
 # container images to deploy.
 # If not set explicitly, the chart's appVersion is used as the tag name.
 # Alternatively, the tag name can also be set per component image.
-# honoImagesTag:
+honoImagesTag: "2.7.0"
 
 # honoContainerRegistry contains the name of the container registry that
 # the container images for Hono's components should be pulled from.
@@ -243,9 +243,11 @@ adapters:
   amqp:
     # enabled indicates if Hono's AMQP 1.0 adapter should be deployed.
     enabled: true
+    useExternalSecret: false  # when true, skip Secret generation; use envSecret for credentials
+    envSecret: ""             # name of existing Secret whose keys are injected as env vars
     # imageName contains the name (excluding registry)
     # of the container image to use for the AMQP adapter
-    imageName: "eclipse/hono-adapter-amqp"
+    imageName: "eclipsehono/hono-adapter-amqp"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -372,9 +374,11 @@ adapters:
   coap:
     # enabled indicates if Hono's CoAP adapter should be deployed.
     enabled: false
+    useExternalSecret: false  # when true, skip Secret generation; use envSecret for credentials
+    envSecret: ""             # name of existing Secret whose keys are injected as env vars
     # imageName contains the name (excluding registry)
     # of the container image to use for the CoAP adapter
-    imageName: "eclipse/hono-adapter-coap"
+    imageName: "eclipsehono/hono-adapter-coap"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -499,9 +503,11 @@ adapters:
   http:
     # enabled indicates if Hono's HTTP adapter should be deployed.
     enabled: true
+    useExternalSecret: false  # when true, skip Secret generation; use envSecret for credentials
+    envSecret: ""             # name of existing Secret whose keys are injected as env vars
     # imageName contains the name (excluding registry)
     # of the container image to use for the HTTP adapter
-    imageName: "eclipse/hono-adapter-http"
+    imageName: "eclipsehono/hono-adapter-http"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -630,7 +636,7 @@ adapters:
     enabled: false
     # imageName contains the name (excluding registry)
     # of the container image to use for the LoRa adapter
-    imageName: "eclipse/hono-adapter-lora"
+    imageName: "eclipsehono/hono-adapter-lora"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -756,9 +762,11 @@ adapters:
   mqtt:
     # enabled indicates if Hono's MQTT 3.1.1 adapter should be deployed.
     enabled: true
+    useExternalSecret: false  # when true, skip Secret generation; use envSecret for credentials
+    envSecret: ""             # name of existing Secret whose keys are injected as env vars
     # imageName contains the name (excluding registry)
     # of the container image to use for the MQTT adapter
-    imageName: "eclipse/hono-adapter-mqtt"
+    imageName: "eclipsehono/hono-adapter-mqtt"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -884,10 +892,12 @@ adapters:
 
 # authServer contains configuration properties for the Auth Server component.
 authServer:
+  useExternalSecret: false  # when true, skip Secret generation; use envSecret for credentials
+  envSecret: ""             # name of existing Secret whose keys are injected as env vars
 
   # imageName contains the name (excluding registry)
   # of the container image to use for the Auth Server
-  imageName: "eclipse/hono-service-auth"
+  imageName: "eclipsehono/hono-service-auth"
   # imageTag contains the tag of the container image to deploy.
   # If not specified, the value of the honoImagesTag property is used.
   # imageTag:
@@ -1010,6 +1020,8 @@ authServer:
 # deviceRegistryExample contains configuration properties for the
 # example Device Registry.
 deviceRegistryExample:
+  useExternalSecret: false  # when true, skip Secret generation; use envSecret for credentials
+  envSecret: ""             # name of existing Secret whose keys are injected as env vars
 
   # enabled indicates whether the example Device Registry
   # should be deployed and used.
@@ -1152,7 +1164,7 @@ deviceRegistryExample:
   embeddedJdbcDeviceRegistry:
     # imageName contains the name (excluding registry)
     # of the container image for the example embedded jdbc device registry.
-    imageName: "eclipse/hono-service-device-registry-jdbc"
+    imageName: "eclipsehono/hono-service-device-registry-jdbc"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -1225,7 +1237,7 @@ deviceRegistryExample:
   mongoDBBasedDeviceRegistry:
     # imageName contains the name (excluding registry)
     # of the container image for the example MongoDB based device registry.
-    imageName: "eclipse/hono-service-device-registry-mongodb"
+    imageName: "eclipsehono/hono-service-device-registry-mongodb"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -1308,7 +1320,7 @@ deviceRegistryExample:
   jdbcBasedDeviceRegistry:
     # imageName contains the name (excluding registry)
     # of the container image for the example jdbc based device registry.
-    imageName: "eclipse/hono-service-device-registry-jdbc"
+    imageName: "eclipsehono/hono-service-device-registry-jdbc"
     # imageTag contains the tag of the container image to deploy.
     # If not specified, the value of the honoImagesTag property is used.
     # imageTag:
@@ -1456,10 +1468,12 @@ mongodb:
 # commandRouterService contains configuration properties for the
 # Command Router service.
 commandRouterService:
+  useExternalSecret: false  # when true, skip Secret generation; use envSecret for credentials
+  envSecret: ""             # name of existing Secret whose keys are injected as env vars
 
   # imageName contains the name (excluding registry)
   # of the container image to use for the Command Router service
-  imageName: "eclipse/hono-service-command-router-infinispan"
+  imageName: "eclipsehono/hono-service-command-router-infinispan"
   # imageTag contains the tag of the container image to deploy.
   # If not specified, the value of the honoImagesTag property is used.
   # imageTag:
@@ -1725,7 +1739,7 @@ kafkaMessagingClusterExample:
   # and one Zookeeper instance should be deployed. This minimal deployment is not suitable
   # for production purposes. To use an already existing Kafka cluster instead,
   # set this property to false and configure "adapters.kafkaMessagingSpec".
-  enabled: true
+  enabled: false
 
 # configuration of the example Kafka cluster to be deployed if "kafkaMessagingClusterExample.enabled" is "true"
 kafka:
