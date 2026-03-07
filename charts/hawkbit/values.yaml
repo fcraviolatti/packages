@@ -109,6 +109,11 @@ env:
 extraEnv: {}
   # JAVA_TOOL_OPTIONS: "-Xms1024m -Xmx1024m"
 
+# optional envFrom sources (e.g. secretRef, configMapRef)
+extraEnvFrom: []
+  # - secretRef:
+  #     name: my-secret
+
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
