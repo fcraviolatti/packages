@@ -101,6 +101,7 @@ data:
       server {
         listen 8080;
         server_name localhost;
+        absolute_redirect {{ .Values.nginx.config.absoluteRedirect | default "on" }};
 
         location / {
           index index.html;
