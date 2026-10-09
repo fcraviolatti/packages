@@ -56,3 +56,13 @@ ditto {
     }
   }
 }
+ssl-config {
+  trustManager {
+    stores = [
+      {
+        type = "PEM"
+        path = "/etc/ditto/certs/ca.crt"
+      }
+    ]
+  }
+}
