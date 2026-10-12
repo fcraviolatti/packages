@@ -94,8 +94,14 @@ spec:
             - name: dittoui-nginx-conf
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
+            {{- with .Values.dittoui.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
         - name: dittoui-nginx-conf
           configMap:
             name: {{ .Release.Name }}-dittoui-config-nginx-conf
+        {{- with .Values.dittoui.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
 {{- end }}
